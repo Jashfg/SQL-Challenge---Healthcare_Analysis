@@ -1,0 +1,96 @@
+#1. Write a SQL query to retrieve all patients who have been diagnosed with COVID-19::
+select     patients.patient_name , diagnoses.diagnosis_name from diagnoses
+inner join visits
+on
+diagnoses.diagnosis_id=visits.diagnosis_id
+inner join patients
+on
+patients.patient_id=visits.patient_id
+where diagnosis_name="covid-19";
+
+#2. Write a SQL query to retrieve the number of visits made by each patient,
+#ordered by the number of visits in descending order.
+select   patient_name , count(visit_id)  as number_of_visits from visits
+inner join patients
+on
+visits.patient_id=patients.patient_id
+group by patient_name 
+order by number_of_visits desc;
+
+#3. Write a SQL query to calculate the average age of patients who have been diagnosed with Pneumonia.
+select   diagnoses.diagnosis_name , avg(age) as average_of_patients from  diagnoses  
+inner join   visits
+on
+diagnoses.diagnosis_id=visits.diagnosis_id
+inner join   patients
+on
+patients.patient_id=visits.patient_id
+where  diagnoses.diagnosis_name="pneumonia"
+group by  diagnoses.diagnosis_name;
+
+#4. Write a SQL query to retrieve the top 3 most common symptoms among all visits.
+SELECT symptoms.symptom_name , COUNT(*) AS symptom_count FROM symptoms
+inner join visits
+on
+symptoms.symptom_id=visits.symptom_id
+GROUP BY symptoms.symptom_name
+ORDER BY symptom_count DESC
+LIMIT 3;
+
+#5. Write a SQL query to retrieve the patient who has the highest number of different symptoms reported.
+select patients.patient_name , count(visits.symptom_id) as highest_number_symptoms  from patients
+inner join visits
+on
+patients.patient_id=visits.patient_id
+inner join symptoms
+on
+symptoms.symptom_id=visits.symptom_id
+group by patients.patient_name   
+order by highest_number_symptoms desc;
+ 
+
+#6. Write a SQL query to calculate the percentage of patients who have been diagnosed
+#with COVID-19 out of the total number of patients.
+SELECT
+    (COUNT(CASE WHEN diagnosis_name = 'COVID-19' THEN 1 END) * 100.0) / COUNT(*) AS percentage_diagnosed_covid
+FROM diagnoses;
+
+
+#7. Write a SQL query to retrieve the top 5 cities with the highest number of visits, 
+#along with the count of visits in each city.
+
+select city ,count(*) as visit_count from patients
+inner join visits
+on
+patients.patient_id=visits.patient_id
+group by city 
+order by visit_count desc
+limit 5;
+
+#8. Write a SQL query to find the patient who has the highest number of visits in a single day, 
+#along with the corresponding visit date.
+select patients.patient_id , patients.patient_name ,visits.visit_date , count(visit_id) as visit_count from patients
+join visits
+on
+patients.patient_id=visits.patient_id
+group by  patients.patient_id , patients.patient_name ,visits.visit_date
+order by visit_count desc
+limit 1;
+
+#9. Write a SQL query to retrieve the average age of patients for each diagnosis, 
+#ordered by the average age in descending order.
+select diagnoses.diagnosis_name , avg(age) as average_age  from diagnoses 
+inner join visits
+on
+diagnoses.diagnosis_id=visits.diagnosis_id
+inner join patients
+on
+patients.patient_id=visits.patient_id
+group by diagnoses.diagnosis_name 
+order by average_age desc;
+
+
+#10. Write a SQL query to calculate the cumulative count of visits over time, ordered by the visit date.
+select    visit_date ,count(visit_id) from visits
+group by visit_date
+order by count(visit_id) desc;
